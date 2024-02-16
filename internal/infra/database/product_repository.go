@@ -32,6 +32,7 @@ func (p *ProductRepository) FindAll(page, limit int, sort string) ([]entity.Prod
 	} else {
 		err = p.DB.Order("created_at" + sort).Find(&products).Error
 	}
+
 	return products, err
 }
 

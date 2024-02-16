@@ -33,7 +33,7 @@ func (u *UserRepository) FindAll(page, limit int, sort string) ([]*entity.User, 
 	return users, err
 }
 
-func (u *UserRepository) FindById(id string) (*entity.User, error) {
+func (u *UserRepository) FindByID(id string) (*entity.User, error) {
 	var user entity.User
 	if err := u.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (u *UserRepository) Update(user *entity.User) error {
 }
 
 func (u *UserRepository) Delete(id string) error {
-	user, err := u.FindById(id)
+	user, err := u.FindByID(id)
 	if err != nil {
 		return err
 	}

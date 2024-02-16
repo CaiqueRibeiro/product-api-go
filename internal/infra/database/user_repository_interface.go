@@ -9,4 +9,5 @@ type UserRepositoryInterface interface {
 	FindByID(id string) (*entity.User, error)
 	Delete(id string) error
 	FindAll(page, limit int, sort string) ([]*entity.User, error)
+	FindByEmail(email string) (*entity.User, error)
 }
