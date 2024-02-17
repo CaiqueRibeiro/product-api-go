@@ -26,9 +26,9 @@ func (u *UserRepository) FindAll(page, limit int, sort string) ([]*entity.User, 
 	var users []*entity.User
 	var err error
 	if page != 0 && limit != 0 {
-		err = u.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at" + sort).Find(&users).Error
+		err = u.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at " + sort).Find(&users).Error
 	} else {
-		err = u.DB.Order("created_at" + sort).Find(&users).Error
+		err = u.DB.Order("created_at " + sort).Find(&users).Error
 	}
 	return users, err
 }

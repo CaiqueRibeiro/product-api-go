@@ -19,18 +19,18 @@ func (p *ProductRepository) Create(product *entity.Product) error {
 	return p.DB.Create(product).Error
 }
 
-func (p *ProductRepository) FindAll(page, limit int, sort string) ([]entity.Product, error) {
+func (p *ProductRepository) FindAll(page, limit int, sort string) ([]*entity.Product, error) {
 	if sort != "" && sort != "asc" && sort != "desc" {
 		sort = "asc"
 	}
 
-	var products []entity.Product
+	var products []*entity.Product
 	var err error
 
 	if page != 0 && limit != 0 {
-		err = p.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at" + sort).Find(&products).Error
+		err = p.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at " + sort).Find(&products).Error
 	} else {
-		err = p.DB.Order("created_at" + sort).Find(&products).Error
+		err = p.DB.Order("created_at " + sort).Find(&products).Error
 	}
 
 	return products, err
