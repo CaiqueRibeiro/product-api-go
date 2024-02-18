@@ -79,7 +79,7 @@ func main() {
 	productRepository := database.NewProductRepository(db)
 	productHandler := handlers.NewProductHandlers(productRepository)
 
-	r := gin.New()
+	r := gin.Default()
 
 	r.Use(JWTConfigs(configs.JWTSecret, configs.JWTExpiresIn))
 
