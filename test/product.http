@@ -3,8 +3,8 @@ Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg0MzgzNTUsInN1YiI6Ijc2NjM5MDA4LTU2OWQtNDMxMC1iZTY2LTJiYTJiMDgyZDdjMyJ9.M_QjX75sFJlsvOOE_2FP0sc1g7TpSVdF_J0n5R1UQ5M
 
 {
-  "name": "Produto 1",
-  "price": 19.99
+  "name": "Produto 2",
+  "price": 193.93
 }
 
 ###
