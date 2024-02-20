@@ -7,8 +7,6 @@ import (
 
 	"github.com/CaiqueRibeiro/product-api/configs"
 	"github.com/CaiqueRibeiro/product-api/internal/entity"
-	"github.com/CaiqueRibeiro/product-api/internal/infra/database"
-	"github.com/CaiqueRibeiro/product-api/internal/infra/webserver/handlers"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/driver/sqlite"
@@ -73,11 +71,8 @@ func main() {
 
 	db.AutoMigrate(&entity.Product{}, &entity.User{})
 
-	userRepository := database.NewUserRepository(db)
-	userHandler := handlers.NewUserHandlers(userRepository)
-
-	productRepository := database.NewProductRepository(db)
-	productHandler := handlers.NewProductHandlers(productRepository)
+	userHandler := NewUserHandler(db)
+	productHandler := NewProductHandler(db)
 
 	r := gin.Default()
 
