@@ -31,39 +31,6 @@ func TestUserEntity(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("should return error if name is not informed", func(t *testing.T) {
-		user := &User{
-			Name:     "",
-			Email:    "caique@gmail.com",
-			Password: "123456",
-		}
-
-		err := user.Validate()
-		assert.EqualError(t, err, "user name is required")
-	})
-
-	t.Run("should return error if email is not informed", func(t *testing.T) {
-		user := &User{
-			Name:     "Caique Ribeiro",
-			Email:    "",
-			Password: "123456",
-		}
-
-		err := user.Validate()
-		assert.EqualError(t, err, "email is required")
-	})
-
-	t.Run("should return error if password is not informed", func(t *testing.T) {
-		user := &User{
-			Name:     "Caique Ribeiro",
-			Email:    "caique@gmail.com",
-			Password: "",
-		}
-
-		err := user.Validate()
-		assert.EqualError(t, err, "password is required")
-	})
-
 	t.Run("should validate password with success", func(t *testing.T) {
 		user, _ := NewUser(
 			"Caique Ribeiro",
@@ -83,4 +50,54 @@ func TestUserEntity(t *testing.T) {
 
 		assert.False(t, user.ValidatePassword("123"))
 	})
+
+	type errorTestCases struct {
+		description   string
+		input         *User
+		expectedError string
+	}
+
+	for _, scenario := range []errorTestCases{
+		{
+			description: "should return error if name is not informed",
+			input: &User{
+				Name:     "",
+				Email:    "caique@gmail.com",
+				Password: "123456",
+			},
+			expectedError: "user name is required",
+		},
+		{
+			description: "should return error if email is not informed",
+			input: &User{
+				Name:     "Caique Ribeiro",
+				Email:    "",
+				Password: "123456",
+			},
+			expectedError: "email is required",
+		},
+		{
+			description: "should return error if password is not informed",
+			input: &User{
+				Name:     "Caique Ribeiro",
+				Email:    "caique@gmail.com",
+				Password: "",
+			},
+			expectedError: "password is required",
+		},
+		{
+			description: "should return error if password is not informed",
+			input: &User{
+				Name:     "Caique Ribeiro",
+				Email:    "caique@gmail.com",
+				Password: "",
+			},
+			expectedError: "password is required",
+		},
+	} {
+		t.Run(scenario.description, func(t *testing.T) {
+			err := scenario.input.Validate()
+			assert.EqualError(t, err, scenario.expectedError)
+		})
+	}
 }
