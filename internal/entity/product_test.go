@@ -8,46 +8,70 @@ import (
 )
 
 func TestProductEntity(t *testing.T) {
-	t.Run("should create a new Product", func(t *testing.T) {
-		createdAt := time.Now()
-		product, err := NewProduct("Product 1", 10.5, createdAt)
+	tests := []struct {
+		description string
+		productName string
+		price       float64
+		createdAt   time.Time
+		wantErr     bool
+		errMessage  string
+	}{
+		{
+			description: "should create a new Product",
+			productName: "Product 1",
+			price:       10.5,
+			createdAt:   time.Now(),
+			wantErr:     false,
+		},
+		{
+			description: "return error if product was created with invalid value",
+			productName: "Product 1",
+			price:       0,
+			createdAt:   time.Now(),
+			wantErr:     true,
+			errMessage:  "price is required",
+		},
+		{
+			description: "Return error if name is not informed",
+			productName: "",
+			price:       10.5,
+			createdAt:   time.Now(),
+			wantErr:     true,
+			errMessage:  "name is required",
+		},
+		{
+			description: "Return error if price is not informed",
+			productName: "Product 1",
+			price:       0.0,
+			createdAt:   time.Now(),
+			wantErr:     true,
+			errMessage:  "price is required",
+		},
+		{
+			description: "Return error if price is negative",
+			productName: "Product 1",
+			price:       -10.0,
+			createdAt:   time.Now(),
+			wantErr:     true,
+			errMessage:  "price is invalid",
+		},
+	}
 
-		assert.Nil(t, err)
-		assert.NotNil(t, product)
-		assert.Equal(t, product.Name, "Product 1")
-		assert.Equal(t, product.Price, 10.5)
-		assert.Equal(t, product.CreatedAt, createdAt)
-	})
+	for _, scenario := range tests {
+		t.Run(scenario.description, func(t *testing.T) {
+			product, err := NewProduct(scenario.productName, scenario.price, scenario.createdAt)
 
-	t.Run("return error if product was created with invalid value", func(t *testing.T) {
-		createdAt := time.Now()
-		product, err := NewProduct("Product 1", 0, createdAt)
-
-		assert.NotNil(t, err)
-		assert.Nil(t, product)
-	})
-
-	t.Run("Return error if name is not informed", func(t *testing.T) {
-		product, err := NewProduct("", 10.5, time.Now())
-
-		assert.NotNil(t, err)
-		assert.EqualError(t, err, "name is required")
-		assert.Nil(t, product)
-	})
-
-	t.Run("Return error if price is not informed", func(t *testing.T) {
-		product, err := NewProduct("Product 1", 0.0, time.Now())
-
-		assert.NotNil(t, err)
-		assert.EqualError(t, err, "price is required")
-		assert.Nil(t, product)
-	})
-
-	t.Run("Return error if price is negative", func(t *testing.T) {
-		product, err := NewProduct("Product 1", -10.0, time.Now())
-
-		assert.NotNil(t, err)
-		assert.EqualError(t, err, "price is invalid")
-		assert.Nil(t, product)
-	})
+			if scenario.wantErr {
+				assert.NotNil(t, err)
+				assert.EqualError(t, err, scenario.errMessage)
+				assert.Nil(t, product)
+			} else {
+				assert.Nil(t, err)
+				assert.NotNil(t, product)
+				assert.Equal(t, product.Name, scenario.productName)
+				assert.Equal(t, product.Price, scenario.price)
+				assert.Equal(t, product.CreatedAt, scenario.createdAt)
+			}
+		})
+	}
 }

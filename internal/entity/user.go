@@ -22,6 +22,9 @@ var (
 )
 
 func NewUser(name, email, password string) (*User, error) {
+	if password == "" {
+		return nil, ErrPasswordIsRequired
+	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err

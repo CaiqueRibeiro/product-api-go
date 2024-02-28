@@ -6,20 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUserEntity(t *testing.T) {
-	t.Run("should create a new user", func(t *testing.T) {
-		user, err := NewUser(
-			"Caique Ribeiro",
-			"caique@gmail.com",
-			"123456",
-		)
-
-		assert.NotNil(t, user)
-		assert.Nil(t, err)
-		assert.Equal(t, user.Name, "Caique Ribeiro")
-		assert.Equal(t, user.Email, "caique@gmail.com")
-	})
-
+func TestUserEntityCreation(t *testing.T) {
 	t.Run("should validate with success", func(t *testing.T) {
 		user := &User{
 			Name:     "Caique Ribeiro",
@@ -50,54 +37,61 @@ func TestUserEntity(t *testing.T) {
 
 		assert.False(t, user.ValidatePassword("123"))
 	})
-
-	type errorTestCases struct {
-		description   string
-		input         *User
-		expectedError string
-	}
-
-	for _, scenario := range []errorTestCases{
+	for _, scenario := range []struct {
+		description string
+		name        string
+		email       string
+		password    string
+		wantErr     bool
+		errMessage  string
+	}{
+		{
+			description: "should create a new user",
+			name:        "Caique Ribeiro",
+			email:       "caique@gmail.com",
+			password:    "123456",
+			wantErr:     false,
+		},
 		{
 			description: "should return error if name is not informed",
-			input: &User{
-				Name:     "",
-				Email:    "caique@gmail.com",
-				Password: "123456",
-			},
-			expectedError: "user name is required",
+			name:        "",
+			email:       "caique@gmail.com",
+			password:    "123456",
+			wantErr:     true,
+			errMessage:  "user name is required",
 		},
 		{
 			description: "should return error if email is not informed",
-			input: &User{
-				Name:     "Caique Ribeiro",
-				Email:    "",
-				Password: "123456",
-			},
-			expectedError: "email is required",
+			name:        "Caique Ribeiro",
+			email:       "",
+			password:    "123456",
+			wantErr:     true,
+			errMessage:  "email is required",
 		},
 		{
 			description: "should return error if password is not informed",
-			input: &User{
-				Name:     "Caique Ribeiro",
-				Email:    "caique@gmail.com",
-				Password: "",
-			},
-			expectedError: "password is required",
-		},
-		{
-			description: "should return error if password is not informed",
-			input: &User{
-				Name:     "Caique Ribeiro",
-				Email:    "caique@gmail.com",
-				Password: "",
-			},
-			expectedError: "password is required",
+			name:        "Caique Ribeiro",
+			email:       "caique@gmail.com",
+			password:    "",
+			wantErr:     true,
+			errMessage:  "password is required",
 		},
 	} {
 		t.Run(scenario.description, func(t *testing.T) {
-			err := scenario.input.Validate()
-			assert.EqualError(t, err, scenario.expectedError)
+			user, err := NewUser(scenario.name, scenario.email, string(scenario.password))
+
+			if scenario.wantErr {
+				println(scenario.description, err.Error())
+				assert.NotNil(t, err)
+				assert.EqualError(t, err, scenario.errMessage)
+				assert.Nil(t, user)
+			} else {
+				assert.Nil(t, err)
+				assert.NotNil(t, user)
+				assert.Equal(t, user.Name, scenario.name)
+				assert.Equal(t, user.Email, scenario.email)
+				assert.NotNil(t, user.Password)
+			}
 		})
 	}
 }
