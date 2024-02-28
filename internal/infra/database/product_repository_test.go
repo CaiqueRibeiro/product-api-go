@@ -11,17 +11,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type SuiteTest struct {
+type ProductSuiteTest struct {
 	suite.Suite
 	db *gorm.DB
 }
 
-func TestSuite(t *testing.T) {
-	suite.Run(t, new(SuiteTest))
+func TestProductSuite(t *testing.T) {
+	suite.Run(t, new(ProductSuiteTest))
 }
 
 // roda antes de tudo (beforeAll do jest)
-func (t *SuiteTest) SetupSuite() {
+func (t *ProductSuiteTest) SetupSuite() {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
 	if err != nil {
 		t.FailNow(err.Error())
@@ -31,12 +31,12 @@ func (t *SuiteTest) SetupSuite() {
 }
 
 // Roda depois de cada teste (afterEach do jest)
-func (t *SuiteTest) TearDownTest() {
+func (t *ProductSuiteTest) TearDownTest() {
 	t.db.Where("1 = 1").Delete(&entity.Product{}) // Deleta todos os registros da tabela
 }
 
 // Roda depois de tudo (afterAll do jest)
-func (t *SuiteTest) TearDownSuite() {
+func (t *ProductSuiteTest) TearDownSuite() {
 	dbInstance, err := t.db.DB()
 	if err != nil {
 		t.FailNow(err.Error())
@@ -44,7 +44,7 @@ func (t *SuiteTest) TearDownSuite() {
 	dbInstance.Close()
 }
 
-func (t *SuiteTest) TestCreate() {
+func (t *ProductSuiteTest) TestCreate() {
 	repo := NewProductRepository(t.db)
 	product, _ := entity.NewProduct("Produto 1", 10, time.Now())
 	err := repo.Create(product)
@@ -60,7 +60,7 @@ func (t *SuiteTest) TestCreate() {
 	assert.Equal(t.T(), product.Price, foundProduct.Price)
 }
 
-func (t *SuiteTest) TestFindAll() {
+func (t *ProductSuiteTest) TestFindAll() {
 	repo := NewProductRepository(t.db)
 
 	product1, _ := entity.NewProduct("Produto 1", 10, time.Now())
@@ -77,7 +77,7 @@ func (t *SuiteTest) TestFindAll() {
 	assert.Len(t.T(), products, 3)
 }
 
-func (t *SuiteTest) TestFindByID() {
+func (t *ProductSuiteTest) TestFindByID() {
 	repo := NewProductRepository(t.db)
 	product, _ := entity.NewProduct("Produto 1", 10, time.Now())
 	repo.Create(product)
@@ -90,7 +90,7 @@ func (t *SuiteTest) TestFindByID() {
 	assert.Equal(t.T(), product.Price, foundProduct.Price)
 }
 
-func (t *SuiteTest) TestUpdate() {
+func (t *ProductSuiteTest) TestUpdate() {
 	repo := NewProductRepository(t.db)
 	product, _ := entity.NewProduct("Produto 1", 10, time.Now())
 	repo.Create(product)
