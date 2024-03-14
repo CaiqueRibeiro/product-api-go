@@ -56,13 +56,7 @@ func Auth(jwtSecret string) gin.HandlerFunc {
 	}
 }
 
-func main() {
-	configs, err := configs.LoadConfig(".env")
-
-	if err != nil {
-		panic(err)
-	}
-
+func BuildServer(jwtSecret string, jwtExpiresIn int) *gin.Engine {
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 
 	if err != nil {
@@ -76,17 +70,29 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(JWTConfigs(configs.JWTSecret, configs.JWTExpiresIn))
+	r.Use(JWTConfigs(jwtSecret, jwtExpiresIn))
 
 	r.POST("/users", userHandler.CreateUser)
 	r.POST("/users/generate_token", userHandler.GetJWT)
 
 	authorized := r.Group("/products")
 	{
-		authorized.Use(Auth(configs.JWTSecret))
+		authorized.Use(Auth(jwtSecret))
 		authorized.POST("/", productHandler.CreateProduct)
 		authorized.GET("/", productHandler.FindAll)
 	}
+
+	return r
+}
+
+func main() {
+	configs, err := configs.LoadConfig(".env")
+
+	if err != nil {
+		panic(err)
+	}
+
+	r := BuildServer(configs.JWTSecret, configs.JWTExpiresIn)
 
 	r.Run(configs.WebServerPort)
 }
